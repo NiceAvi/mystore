@@ -1,0 +1,47 @@
+<div class="col mb-4">
+  <div class="card">
+    <img src="{{ product.url }}" class="card-img-top" alt="..." (click)="showProductDetails(product)" />
+    <div class="card-body">
+      <h5 class="card-title">{{ product.name }}</h5>
+      <h5 class="card-title">$ {{ product.price }}</h5>
+      <p class="card-text">{{ product.description }}</p>
+      <select class="form-control" [(ngModel)]="product.quantity" (ngModelChange)="changeQuantity($event)">
+        <option class="option" *ngFor="let quantity of quantities" [value]="quantity">
+          {{ quantity }}
+        </option>
+      </select>
+      <br>
+      <button class="btn btn-primary btn-block" type="button" (click)="cart.emit(product)">
+        Add to cart
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- <div class="product-container">
+  <img
+    class="product-image"
+    src="{{ product.url }}"
+    (click)="showProductDetails(product)"
+  />
+  <div>{{ product.name }}</div>
+  <div>$ {{ product.price }}</div>
+  <div>{{ product.description }}</div>
+
+  <select
+    class="select-input"
+    [(ngModel)]="product.quantity"
+    (ngModelChange)="changeQuantity($event)"
+  >
+    <option
+      class="option"
+      *ngFor="let quantity of quantities"
+      [value]="quantity"
+    >
+      {{ quantity }}
+    </option>
+  </select>
+  <button class="addToCartBtn" type="button" (click)="cart.emit(product)">
+    Add to cart
+  </button>
+</div> -->
