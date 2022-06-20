@@ -1,3 +1,38 @@
+
+# Udacity MyStore
+
+MyStore is a single-page application built into Angular, providing a rich, dynamic experience across the web. It lists the products that can be added to the cart and then checkout.
+
+It has the following functionality:
+
+- View list of products
+- Add products to cart
+- View products in cart
+- Delete product from cart 
+- Checkout products in cart 
+
+
+## Run 
+### Instructions
+
+1. Download the files in this repository
+2. cd into the directory
+3. ```npm install```
+4. ```ng serve```
+5. The project will be served on default on ```localhost:4200```
+
+Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+
+**NB**: Be sure to allow the default port of `4200`
+
+
+
+
+
+
+
+
+
 # Mystore
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.0.2.
