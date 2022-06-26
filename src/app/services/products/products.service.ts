@@ -1,15 +1,31 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http'
+import { Product } from "../../models/product";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
+
+/**
+ * Product Service that handles endpoint calls to retrieve products.
+ */
 export class ProductsService {
+  product_data!: Product;
 
-  constructor(private http: HttpClient) { }
+  product_list!: Product[];
 
-  getProducts(): Observable<[]> {
-    return this.http.get<[]>('assets/data.json');
+  constructor(private http: HttpClient) {}
+
+
+  getProducts(): Observable<Product[]> {
+    return this.http.get<Product[]>('../assets/data.json');
   }
+
+
+  setProducts(product_list: Product[]) {
+    this.product_list = product_list;
+  }
+  
+  getSingleProduct() {}
 }

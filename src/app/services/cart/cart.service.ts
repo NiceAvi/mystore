@@ -1,58 +1,73 @@
 import { Injectable } from '@angular/core';
-import Product from 'src/app/models/product';
+import { Form } from '../../models/form';
+import { Product } from "../../models/product";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 
+/**
+ * Service that handles information related to a User's cart and their order_data.
+ */
 export class CartService {
-  products: Array<Product> = [];
-  productTotal: number = 0;
-  grandTotal: number = 0;
+  products_cart: Product[] = [];
+  order_data!: Form;
 
+  constructor() {}
 
-
-  constructor() { }
-
-  getProducts(): Array<Product> {
-    return this.products;
-  }
-
-  getCartTotal(): number {
-    return this.grandTotal;
-  }
-
-  addProductToCart(product: Product): void {
-    this.products.push(product);
-    this.calculateCartTotal();
-  }
-
-  removeProductFromCart(product: Product): void {
-    let filteredArray = this.products.filter(p => p.id !== product.id);
-    this.products = filteredArray;
-
-    if (this.products.length === 0) {
-      this.resetTotal();
-    }
-
-    alert(`${product.name} has been removed from the cart.`);
-  }
-
-  calculateCartTotal(): number {
-    if (this.products.length === 0) {
-      return this.productTotal;
+  /**
+   * Adds an item to a user's cart. Updates quantity if item already exists.
+   * @param productItem
+   */
+  addToCart(productItem: Product) {
+    const cartProduct = this.products_cart.find(
+      (item) => item.id == productItem.id
+    );
+    if (cartProduct?.quantity && productItem?.quantity) {
+      cartProduct.quantity += productItem.quantity;
     } else {
-      this.products.forEach(product => {
-        this.productTotal = product.quantity * product.price;
-      });
-
-      this.grandTotal += this.productTotal
-
-      return this.grandTotal;
+      this.products_cart.push(productItem);
     }
   }
 
-  resetTotal(): void {
-    this.productTotal = 0;
+  /**
+   * Return user's cart
+   * @returns List of products in cart
+   */
+  getCart(): Product[] {
+    return this.products_cart;
+  }
+
+  /**
+   * Empties a user's cart, generally after an order is submitted.
+   * @returns the newly emptied cart.
+   */
+  setCart(products_cart: Product[]) {
+    this.products_cart = products_cart;
+  }
+
+  /**
+   * Empties a user's cart, generally after an order is submitted.
+   * @returns the newly emptied cart.
+   */
+  setCartToEmpty(): Product[] {
+    this.products_cart = [];
+    return this.products_cart;
+  }
+
+  /**
+   * Stores a user's order info after an order has been submitted.
+   * @param order_data -
+   */
+  setOrderInfo(order_data: Form): void {
+    this.order_data = order_data;
+  }
+
+  /**
+   * Retrieves a user's order_data
+   * @returns Form object containing user info.
+   */
+  getOrderInfo(): Form {
+    return this.order_data;
   }
 }

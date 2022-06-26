@@ -1,72 +1,83 @@
-<div class="cart-container">
-  <div class="cart-panel" *ngFor="let product of products">
-      <img src={{product.url}}  />
-      <h2> {{ product.name}} </h2>
-      <h2>${{ product.price }}</h2>
-      <h2>Amount:</h2>
-      <input type="number" min="0" max="10" [(ngModel)]='product.quantity' (ngModelChange)='onNumberChanged($event, product)' />
-  </div>
 
-  <div class="ml-3 mr-3">
-      <h1>Total: ${{ getCartTotal() }}</h1>
-  </div>
-
-  <div class="form-margin ml-3">
-      <form class="form" #form="ngForm" (ngSubmit)="onSubmit()">
-          <div class="form-group">
-              <label>Full name</label>
-              <input type="text"  class="form-control" placeholder="(minimum 3 characters)" name="fullName" required minlength="3" [(ngModel)]="fullName" #customerName="ngModel"  />
-          </div>
-
-          <div class="form-group">
-              <label>Address</label>
-              <input type="text" class="form-control" placeholder="(minimum 6 characters )" name="address" required minlength="6" [(ngModel)]="address" #customerAddress="ngModel"  />
-          </div>
-
-          <div class="form-group">
-              <label>Credit Card Number</label>
-              <input type="text" class="form-control" placeholder="(16-digit number)" name="creditCardNumber" required minlength="16" [(ngModel)]="creditCardNumber" #paymentNumber="ngModel" pattern="^[0-9]*$"  />
-          </div>
-
-          <div>
-              <label>We'll never share your payment details with anyone else.</label>
-          </div>
-
-          <div class="form-group">
-              <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Submit</button>
-          </div>
-
-          <div *ngIf="paymentNumber.dirty && paymentNumber.invalid">
-              <div *ngIf="paymentNumber.errors?.['required']">
-                  A credit card number is needed to check out.
-              </div>
-              <div *ngIf="paymentNumber.errors?.['minlength']">
-                  The credit card must be 16 digits in length.
-              </div>
-              <!-- TODO: We need to check if the payment number contains anything but numbers -->
-              <!-- TODO: Validation should only pass on numbers nothing else. -->
-              <div *ngIf="paymentNumber.errors?.['pattern']">
-                  Only Numbers allowed
-              </div>
-          </div>
-
-          <div *ngIf="customerName.dirty && customerName.invalid">
-              <div *ngIf="customerName.errors?.['required']">
-                  Full name is required.
-              </div>
-              <div *ngIf="customerName.errors?.['minlength']">
-                  The full name must be longer than 3 characters.
-              </div>
-          </div>
-
-          <div *ngIf="customerAddress.dirty && customerAddress.invalid">
-              <div *ngIf="customerAddress.errors?.['required']">
-                  An address is required to check out.
-              </div>
-              <div *ngIf="customerAddress.errors?.['minlength']">
-                  The address must contain more than 6 characters.
-                </div>
-          </div>
-      </form>
-  </div>
+<div
+  class="empty-cart-message"
+  *ngIf="products_cart.length == 0; else elseBlock"
+>
+  <h1>Cart empty!.</h1>
 </div>
+
+<ng-template #elseBlock>
+  <div class="cart-container">
+    <div class="cart-panel">
+      <div class="cart-item" *ngFor="let cartItem of products_cart">
+        <img class="product-image" src="{{ cartItem.url }}" />
+        <div class="cart-item-details">
+          <p>
+            <strong>{{ cartItem.name }}</strong>
+          </p>
+          <p>${{ cartItem.price }}</p>
+          <div>
+            <label>Amount:</label>
+            <input
+            class="form-control"
+              type="number"
+              name="{{ cartItem.id }} "
+              value="{{ cartItem.quantity }}"
+              min="0"
+              [(ngModel)]="cartItem.quantity"
+              (ngModelChange)="updateCart(cartItem)"
+            />
+          </div>
+          <br>
+          <button class="btn btn-primary" (click)="removeFromCart(cartItem)">
+            Remove from cart
+          </button>
+        </div>
+      </div>
+      <form>
+        <h1 id="totalPrice">Total: ${{ total_price.toFixed(2) }}</h1>
+      </form>
+    </div>
+
+    <div class="cart-panel">
+      <form class="form-margin" #form="ngForm" (ngSubmit)="onSubmitOrder()">
+        <p>Full Name</p>
+        <input
+          class="form-control"
+          type="text"
+          name="fullName"
+          id="fullName"
+          required
+          minlength="5"
+          [(ngModel)]="full_name"
+        />
+        <p>Address</p>
+        <input
+        class="form-control"
+          type="text"
+          name="address"
+          id="address"
+          required
+          minlength="10"
+          [(ngModel)]="address"
+        />
+        <p>Credit Card Number</p>
+        <input
+        class="form-control"
+          type="text"
+          name="ccNum"
+          id="ccNum"
+          required
+          minlength="16"
+          maxlength="16"
+          inputmode="numeric"
+          pattern="^[0-9]*$"
+          [(ngModel)]="credit_card_number"
+        />
+        <br />
+
+        <button class="btn btn-primary" [disabled]="form.invalid">Submit order</button>
+      </form>
+    </div>
+  </div>
+</ng-template>

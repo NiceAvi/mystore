@@ -1,47 +1,19 @@
-<div class="col mb-4">
-  <div class="card">
-    <img src="{{ product.url }}" class="card-img-top" alt="..." (click)="showProductDetails(product)" />
-    <div class="card-body">
-      <h5 class="card-title">{{ product.name }}</h5>
-      <h5 class="card-title">$ {{ product.price }}</h5>
-      <p class="card-text">{{ product.description }}</p>
-      <select class="form-control" [(ngModel)]="product.quantity" (ngModelChange)="changeQuantity($event)">
-        <option class="option" *ngFor="let quantity of quantities" [value]="quantity">
-          {{ quantity }}
-        </option>
-      </select>
-      <br>
-      <button class="btn btn-primary btn-block" type="button" (click)="cart.emit(product)">
-        Add to cart
-      </button>
-    </div>
-  </div>
-</div>
+<form class="product-container" (ngSubmit)="submitAddToCart(product_item)">
+  <a [routerLink]='["product", product_item.id]'>
+    <img class="product-image" src="{{ product_item.url }}" />
+  </a>
 
-<!-- <div class="product-container">
-  <img
-    class="product-image"
-    src="{{ product.url }}"
-    (click)="showProductDetails(product)"
-  />
-  <div>{{ product.name }}</div>
-  <div>$ {{ product.price }}</div>
-  <div>{{ product.description }}</div>
-
+  <p>{{ product_item.name }}</p>
+  <p>${{ product_item.price }}</p>
   <select
-    class="select-input"
-    [(ngModel)]="product.quantity"
-    (ngModelChange)="changeQuantity($event)"
+    class="form-control"
+    [(ngModel)]="quantity"
+    name="{{ product_item.id }}"
   >
-    <option
-      class="option"
-      *ngFor="let quantity of quantities"
-      [value]="quantity"
-    >
-      {{ quantity }}
+    <option *ngFor="let num of quantities" [ngValue]="num">
+      {{ num }}
     </option>
   </select>
-  <button class="addToCartBtn" type="button" (click)="cart.emit(product)">
-    Add to cart
-  </button>
-</div> -->
+  <br>  
+  <button type="submit" class="btn btn-primary">Add to cart</button>
+</form>

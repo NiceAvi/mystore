@@ -1,31 +1,36 @@
-<div class="detail-container">
-  <img class="img" src="{{ product.url }}" />
-  <div class="detail-item">
-    <h2>{{ product.name }}</h2>
-    <p>${{ product.price }}</p>
-    <p>{{ product.description }}</p>
-    <select
-      class="form-control"
-      [(ngModel)]="product.quantity"
-      (ngModelChange)="changeQuantity($event)"
-    >
-      <option
-        class="option"
-        *ngFor="let quantity of quantities"
-        [value]="quantity"
-      >
-        {{ quantity }}
-      </option>
-    </select>
-    <br>
-    <div>
-      <button type="button" class="btn btn-primary" (click)="addToCart(product)">
-        Add to cart
-      </button>
-    </div>
 
-    <div class="back-link">
-      <a routerLink="/products">Back to product list</a>
-    </div>
-  </div>
+<div class="detail-container" *ngIf="product_item == undefined; else elseBlock">
+  <a routerLink="/">
+    <h1 routerLink="/">
+      Product not found!
+    </h1>
+  </a>
 </div>
+
+<ng-template #elseBlock>
+  <form class="detail-container" (ngSubmit)="submitAddToCart(product_item)">
+    <img src="{{ product_item.url }}" />
+    <div #elseBlock class="detail-item">
+      <h1>{{ product_item.name }}</h1>
+      <p>${{ product_item.price }}</p>
+      <p>{{ product_item.description }}</p>
+      <div>
+        <select
+          class="form-control"
+          [(ngModel)]="quantity"
+          name="{{ product_item.id }}"
+        >
+          <option *ngFor="let num of quantities" [ngValue]="num">
+            {{ num }}
+          </option>
+        </select>
+        <br />
+        <button type="submit" class="btn btn-primary">Add to cart</button>
+        <br />
+        <br />
+
+        <a class="back-link" routerLink="/">&larr; Back to product list</a>
+      </div>
+    </div>
+  </form>
+</ng-template>

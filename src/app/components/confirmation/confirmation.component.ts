@@ -1,25 +1,24 @@
-import { Component, OnInit } from '@angular/core';
-import { Navigation, Router } from '@angular/router';
+import { Component, Input, OnInit } from '@angular/core';
+import { Form } from 'src/app/models/form';
 import { CartService } from 'src/app/services/cart/cart.service';
 
 @Component({
   selector: 'app-confirmation',
   templateUrl: './confirmation.component.html',
-  styleUrls: ['./confirmation.component.css']
+  styleUrls: ['./confirmation.component.css'],
 })
+
+
 export class ConfirmationComponent implements OnInit {
-  total: number = 0;
+  order_info!: Form;
 
-  constructor(private router: Router, private cartService: CartService) {
-    let nav: Navigation | null = this.router.getCurrentNavigation();
-    // if(nav !== null) {
-    //   if(nav.extras && nav.extras.state && nav.extras.state.total) {
-    //     this.total = nav.extras.state.total;
-    //   }
-    // }
-    this.total = this.cartService.getCartTotal();
-  }
+  constructor(private cart_service: CartService) {}
+
   ngOnInit(): void {
+    this.order_info = this.cart_service.getOrderInfo();
   }
 
+  ngOnDestroy(): void {
+    this.cart_service.setOrderInfo(new Form());
+  }
 }

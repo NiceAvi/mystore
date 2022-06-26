@@ -1,66 +1,79 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import Form from 'src/app/models/form';
-import Product from 'src/app/models/product';
+import { Product } from "src/app/models/product";
+import { Form } from 'src/app/models/form';
 import { CartService } from 'src/app/services/cart/cart.service';
+import { Router } from '@angular/router';
+
 @Component({
   selector: 'app-cart',
   templateUrl: './cart.component.html',
-  styleUrls: ['./cart.component.css']
+  styleUrls: ['./cart.component.css'],
 })
+
+
 export class CartComponent implements OnInit {
-  @Input() product: Product = new Product();
-  //product: Product = new Product();
+  @Input() products_cart: Product[] = [];
 
-  fullName: string = "";
-  address: string = "";
-  creditCardNumber: string = "";
-  errorMessage: string = "";
-  total: number = 0;
-  products: Array<Product> = [];
-  selectedAmount: number = 1;
+  full_name!: string;
+  address!: string;
+  credit_card_number!: string;
+  total_price: number = 0;
+  order_info!: Form;
 
-  constructor(private router: Router, private cartService: CartService) { }
+  constructor(private cart_service: CartService, private router: Router) {}
 
   ngOnInit(): void {
-    this.products = this.cartService.getProducts();
+    this.products_cart = this.cart_service.getCart();
+
+    for (let i = 0; i < this.products_cart.length; i++) {
+      let quantity = this.products_cart[i].quantity;
+      if (!quantity) {
+        quantity = 1;
+      }
+      this.total_price += this.products_cart[i].price * quantity;
+    }
+    console.log(this.total_price);
   }
 
-  onSubmit(): void {
-    const form: Form = new Form()
-    form.fullName = this.fullName;
-    form.address = this.address;
-    form.creditCardNumber = this.creditCardNumber;
 
-    this.router.navigate([`/confirmation`], { state: { total: this.total } });
-  }
+  updateCart(cart_item: Product) {
+    if (cart_item.quantity == 0) {
+      this.removeFromCart(cart_item);
+    }
 
-  onNumberChanged(event: Event, product: Product): void {
-    product.quantity = Number(event);
-
-    if (product.quantity === 0) {
-      this.removeProductFromCart(product)
-    } else {
-      this.updateCart();
+    this.total_price = 0;
+    for (let i = 0; i < this.products_cart.length; i++) {
+      let quantity = this.products_cart[i].quantity;
+      if (!quantity) {
+        quantity = 1;
+      }
+      this.total_price += this.products_cart[i].price * quantity;
     }
   }
 
-  updateCart(): void {
-    alert(`Your cart and total has been updated.`)
-    this.cartService.calculateCartTotal();
+  removeFromCart(cart_item: Product) {
+    this.products_cart = this.products_cart.filter(
+      (item) => item.id != cart_item.id
+    );
+    this.cart_service.setCart(this.products_cart);
+    alert(`${cart_item.name} removed from your cart.`);
   }
 
-  removeProductFromCart(product: Product): void {
-    this.cartService.removeProductFromCart(product);
-    this.products = this.cartService.getProducts();
-  }
 
-  calculateTotal(): number {
-    return this.cartService.calculateCartTotal();
-  }
+  onSubmitOrder() {
+    const order_info: Form = {
+      full_name: this.full_name,
+      total_price: this.total_price,
+      credit_card_number: this.credit_card_number,
+    };
 
-  getCartTotal(): number {
-    return this.cartService.getCartTotal();
-  }
+    this.cart_service.setOrderInfo(order_info);
+    this.router.navigate(['/confirmation']);
 
+    this.products_cart = this.cart_service.setCartToEmpty();
+    this.full_name = '';
+    this.address = '';
+    this.credit_card_number = '';
+    this.total_price = 0;
+  }
 }
